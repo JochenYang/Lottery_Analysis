@@ -2,8 +2,8 @@ name: 更新彩票数据和分析报告
 
 on:
   schedule:
-    # 每天晚上23:00 (UTC+8) 运行，对应 15:00 UTC
-    - cron: '0 15 * * *'
+    # 每天晚上21:45 (UTC+8) 运行，对应 13:45 UTC
+    - cron: '45 13 * * *'
   workflow_dispatch: # 允许手动触发
   push:
     branches: [ main ]  # 推送到main分支时触发
