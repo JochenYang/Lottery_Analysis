@@ -115,54 +115,51 @@ jobs:
         echo "准备创建发布版本..."
         # 获取当前日期作为tag (使用UTC+8时区)
         TAG_NAME="$(TZ='Asia/Shanghai' date +'%Y%m%d')"
-        
-        # 检查并删除已存在的tag，确保幂等性
-        git push --delete origin $TAG_NAME || true
-        git tag -d $TAG_NAME || true
+
+        # 强制删除已存在的tag，确保幂等性
+        echo "正在删除可能存在的旧标签: $TAG_NAME"
+        git push --delete origin $TAG_NAME 2>/dev/null || echo "远程标签 $TAG_NAME 不存在或删除失败，继续执行。"
+        git tag -d $TAG_NAME 2>/dev/null || echo "本地标签 $TAG_NAME 不存在或删除失败，继续执行。"
 
         # 创建新的tag和release
+        echo "正在创建新标签: $TAG_NAME"
         git tag $TAG_NAME
         git push origin $TAG_NAME
-          
-          # 创建release notes
-          cat > release_notes.md << EOF
+
+        # 创建release notes
+        cat > release_notes.md << EOF
         ## 🎯 彩票数据更新 - $(TZ='Asia/Shanghai' date +'%Y年%m月%d日') (UTC+8)
-        
+
         ### 📊 本次更新内容
         - 抓取最新双色球开奖数据
         - 更新统计分析图表
         - 刷新号码频率分析
         - 更新分析报告文档
-        
+
         ### 📁 更新文件
         **双色球数据：**
         - \`data/lottery_data.json\` - 双色球开奖数据
-        
 
-        
         ### ⚠️ 免责声明
         本数据仅供学习和统计分析使用，彩票开奖完全随机，请理性购彩。
         EOF
-          
-          # 准备要上传的文件列表（只上传存在的文件）
-          upload_files=""
-          [ -f "data/lottery_data.json" ] && upload_files="$upload_files data/lottery_data.json"
-          
-          # 使用GitHub CLI创建release（只上传存在的文件）
-          if [ -n "$upload_files" ]; then
-            gh release create $TAG_NAME \
-              --title "彩票数据更新 $TAG_NAME" \
-              --notes-file release_notes.md \
-              $upload_files
-            echo "发布版本创建成功，包含文件: $upload_files"
-          else
-            gh release create $TAG_NAME \
-              --title "彩票数据更新 $TAG_NAME" \
-              --notes-file release_notes.md
-            echo "发布版本创建成功，但没有数据文件可上传"
-          fi
+
+        # 准备要上传的文件列表（只上传存在的文件）
+        upload_files=""
+        [ -f "data/lottery_data.json" ] && upload_files="$upload_files data/lottery_data.json"
+
+        # 使用GitHub CLI创建release（只上传存在的文件）
+        if [ -n "$upload_files" ]; then
+          gh release create $TAG_NAME \
+            --title "彩票数据更新 $TAG_NAME" \
+            --notes-file release_notes.md \
+            $upload_files
+          echo "发布版本创建成功，包含文件: $upload_files"
         else
-          echo "Tag $TAG_NAME 已存在，跳过创建发布版本"
+          gh release create $TAG_NAME \
+            --title "彩票数据更新 $TAG_NAME" \
+            --notes-file release_notes.md
+          echo "发布版本创建成功，但没有数据文件可上传"
         fi
         
     - name: 输出结果
