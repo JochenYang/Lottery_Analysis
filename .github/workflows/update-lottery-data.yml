@@ -116,11 +116,13 @@ jobs:
         # 获取当前日期作为tag (使用UTC+8时区)
         TAG_NAME="$(TZ='Asia/Shanghai' date +'%Y%m%d')"
         
-        # 检查tag是否已存在
-        if ! git tag | grep -q "^$TAG_NAME$"; then
-          # 创建tag和release
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
+        # 检查并删除已存在的tag，确保幂等性
+        git push --delete origin $TAG_NAME || true
+        git tag -d $TAG_NAME || true
+
+        # 创建新的tag和release
+        git tag $TAG_NAME
+        git push origin $TAG_NAME
           
           # 创建release notes
           cat > release_notes.md << EOF
