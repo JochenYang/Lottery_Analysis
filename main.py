@@ -22,7 +22,6 @@ import time
 from datetime import datetime, timezone, timedelta
 
 sys.path.append('scripts')
-from scripts.super_lotto_analyzer import SuperLottoAnalyzer
 from scripts.lottery_analyzer import DoubleColorBallAnalyzer
 
 def create_directories():
@@ -52,6 +51,39 @@ def show_disclaimer():
     print("• 请理性购彩，量力而行，未满18周岁禁止购买")
     print("• 使用本软件产生的任何后果由用户自行承担")
     print("=" * 80)
+
+def update_readme_recommendations(recommendations, timestamp):
+    """更新README.md文件中的推荐号码"""
+    try:
+        with open('README.md', 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        recommendation_text = f"### 双色球推荐 (更新时间: {timestamp})\n\n"
+        for i, rec in enumerate(recommendations):
+            recommendation_text += f"**推荐 {i+1}** ({rec['type']}): `{rec['numbers']}` + `{rec['blue']}`  \n"
+            recommendation_text += f"*{rec['description']} | {rec['odds_evens']} | 和值:{rec['sum_val']} | 跨度:{rec['span']}*\n\n"
+
+        start_marker = '<!-- RECOMMENDATIONS_START -->'
+        end_marker = '<!-- RECOMMENDATIONS_END -->'
+
+        start_index = content.find(start_marker)
+        end_index = content.find(end_marker)
+
+        if start_index != -1 and end_index != -1:
+            new_content = (
+                content[:start_index + len(start_marker)] +
+                '\n' + recommendation_text.strip() + '\n' +
+                content[end_index:]
+            )
+            
+            with open('README.md', 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            print("✅ README.md 中的推荐号码已更新")
+        else:
+            print("⚠️  在 README.md 中未找到推荐号码标记")
+
+    except Exception as e:
+        print(f"❌ 更新README.md失败: {e}")
 
 def run_lottery_analyzer(unified_timestamp=None):
     """运行双色球分析器"""
@@ -88,8 +120,7 @@ def run_lottery_analyzer(unified_timestamp=None):
         # 生成聚合数据文件
         analyzer.generate_aggregated_data_hjson()
         
-        # 更新README中的推荐号码（使用统一时间戳）
-        analyzer.update_readme_recommendations(timestamp=unified_timestamp)
+
         
         print("✅ 双色球分析完成！")
         return True
@@ -98,61 +129,7 @@ def run_lottery_analyzer(unified_timestamp=None):
         print(f"❌ 双色球分析出错: {e}")
         return False
 
-def run_super_lotto_analyzer(unified_timestamp=None):
-    """运行大乐透分析器"""
-    print("\n" + "=" * 60)
-    print("🔵 开始运行大乐透数据分析...")
-    print("=" * 60)
-    
-    try:
-        analyzer = SuperLottoAnalyzer()
-        
-        # 显示使用的模式
-        if hasattr(analyzer, 'use_drissionpage') and analyzer.use_drissionpage:
-            print("🚀 将使用DrissionPage浏览器模式获取数据（可绕过567错误）")
-        else:
-            print("🔄 将使用传统requests模式获取数据")
-        
-        # 获取最大页数并抓取数据
-        max_pages = analyzer.get_max_pages()
-        analyzer.fetch_lottery_data(max_pages=max_pages)
-        analyzer.save_data()
-        
-        if not analyzer.lottery_data:
-            print("❌ 大乐透数据获取失败")
-            return False
-        
-        # 执行分析
-        analyzer.analyze_frequency()
-        analyzer.analyze_patterns()
-        analyzer.analyze_trends()
-        analyzer.generate_recommendations(num_sets=8)
-        
-        # 生成图表和报告
-        try:
-            analyzer.visualize_frequency()
-        except Exception as e:
-            print(f"⚠️  大乐透图表生成失败: {e}")
-        
-        analyzer.generate_analysis_report()
-        
-        # 生成聚合数据文件
-        analyzer.generate_aggregated_data_hjson()
-        
-        # 更新README中的推荐号码（使用统一时间戳）
-        if unified_timestamp:
-            analyzer.update_readme_recommendations(timestamp=unified_timestamp)
-        else:
-            analyzer.update_readme_recommendations()
-        
-        print("✅ 大乐透分析完成")
-        return True
-        
-    except Exception as e:
-        print(f"❌ 大乐透分析过程出错: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+
 
 def main():
     """主函数"""
@@ -172,8 +149,19 @@ def main():
     
     # 运行分析器（传入统一时间戳）
     lottery_success = run_lottery_analyzer(unified_timestamp)
-    # super_lotto_success = run_super_lotto_analyzer(unified_timestamp)
-    super_lotto_success = False
+    
+    # 更新README
+    if lottery_success:
+        print("\n🔄 正在更新 README.md 中的推荐号码...")
+        try:
+            # 重新实例化分析器以获取最新数据
+            analyzer = DoubleColorBallAnalyzer()
+            analyzer.load_data()
+            recommendations = analyzer.generate_recommendations(num_sets=5)
+            update_readme_recommendations(recommendations, unified_timestamp)
+            print("✅ README.md 更新成功！")
+        except Exception as e:
+            print(f"❌ 更新 README.md 失败: {e}")
     
     # 总结结果
     end_time = time.time()
@@ -184,22 +172,15 @@ def main():
     print("📊 分析结果总结")
     print("=" * 80)
     print(f"🔴 双色球分析: {'✅ 成功' if lottery_success else '❌ 失败'}")
-    print(f"🔵 大乐透分析: {'✅ 成功' if super_lotto_success else '❌ 失败'}")
     print(f"⏱️  总耗时: {duration:.1f} 秒")
     print(f"🕐 完成时间: {current_time} (UTC+8)")
     
-    if lottery_success or super_lotto_success:
+    if lottery_success:
         print("\n📁 生成的文件:")
-        if lottery_success:
-            print("• data/lottery_data.json - 双色球开奖数据")
-            print("• data/lottery_aggregated_data.hjson - 双色球聚合分析数据")
-            print("• reports/analysis_report.md - 双色球分析报告")
-            print("• pics/lottery_frequency_analysis.png - 双色球频率图表")
-        if super_lotto_success:
-            print("• data/super_lotto_data.json - 大乐透开奖数据")
-            print("• data/super_lotto_aggregated_data.hjson - 大乐透聚合分析数据")
-            print("• reports/super_lotto_analysis_report.md - 大乐透分析报告")
-            print("• pics/super_lotto_frequency_analysis.png - 大乐透频率图表")
+        print("• data/lottery_data.json - 双色球开奖数据")
+        print("• data/lottery_aggregated_data.hjson - 双色球聚合分析数据")
+        print("• reports/analysis_report.md - 双色球分析报告")
+        print("• pics/lottery_frequency_analysis.png - 双色球频率图表")
     
     print("\n" + "=" * 80)
     print("📋 重要提醒：")
@@ -209,17 +190,11 @@ def main():
     print("• 如有赌博问题，请寻求专业帮助")
     print("=" * 80)
     
-    # 改进的返回逻辑：只要有一个成功就返回0，避免因大乐透失败影响双色球数据提交
-    if lottery_success or super_lotto_success:
-        if lottery_success and super_lotto_success:
-            print("🎉 所有分析任务完成！")
-        elif lottery_success:
-            print("🎉 双色球分析完成！大乐透分析失败，但不影响数据提交。")
-        else:
-            print("🎉 大乐透分析完成！双色球分析失败，但不影响数据提交。")
+    if lottery_success:
+        print("\n🎉 双色球分析任务完成！")
         return 0
     else:
-        print("⚠️  所有分析任务失败，请检查网络连接和依赖库")
+        print("\n⚠️  双色球分析任务失败，请检查网络连接和依赖库")
         return 1
 
 if __name__ == "__main__":
@@ -232,4 +207,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ 程序运行出错: {e}")
         print("请检查网络连接和依赖库安装情况")
-        sys.exit(1) 
+        sys.exit(1)

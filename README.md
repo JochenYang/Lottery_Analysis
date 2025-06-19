@@ -16,6 +16,7 @@
 
 **⚠️ 以下推荐号码基于历史统计分析，仅供参考，不保证中奖！**
 
+<!-- RECOMMENDATIONS_START -->
 ### 双色球推荐 (更新时间: 2025年05月25日 22:15:41)
 
 **推荐 1** (高频主导): `06 09 11 14 20 32` + `01`  
@@ -32,6 +33,8 @@
 
 **推荐 5** (超高频): `01 02 09 10 19 20` + `01`  
 *超高频号码的激进组合 | 3奇3偶 | 和值:61 | 跨度:19*
+<!-- RECOMMENDATIONS_END -->
+
 ## 🚀 功能特性
 
 - 📈 **自动数据抓取**: 每日自动抓取最新双色球开奖数据
@@ -45,17 +48,25 @@
 ## 📁 项目结构
 
 ```
-lucky_ball/
-├── lottery_analyzer.py          # 主分析脚本
-├── requirements.txt             # Python依赖包
-├── lottery_data.json           # 开奖数据文件 (自动生成)
-├── analysis_report.md          # 详细分析报告 (自动生成)
-├── lottery_frequency_analysis.png # 分析图表 (自动生成)
-├── .github/workflows/
-│   └── update-lottery-data.yml  # GitHub Actions工作流
-├── README.md                    # 项目说明
-├── LICENSE                      # 开源协议
-└── .gitignore                   # Git忽略文件
+Lottery_Analysis/
+├── .github/
+│   └── workflows/
+│       └── update-lottery-data.yml  # GitHub Actions工作流
+├── data/
+│   ├── lottery_aggregated_data.hjson # 聚合分析数据
+│   └── lottery_data.json           # 双色球开奖数据
+├── pics/
+│   └── lottery_frequency_analysis.png # 号码频率分析图
+├── reports/
+│   └── analysis_report.md          # 分析报告
+├── scripts/
+│   └── lottery_analyzer.py          # 数据分析器
+├── test/                            # 测试代码
+├── .gitignore
+├── LICENSE
+├── README.md
+├── main.py                        # 主运行脚本
+└── requirements.txt               # Python依赖
 ```
 
 ## 🛠️ 安装使用
@@ -65,18 +76,20 @@ lucky_ball/
 1. **克隆仓库**
 
    ```bash
-   git clone https://github.com/your-username/lucky_ball.git
-   cd lucky_ball
+   git clone https://github.com/your-username/Lottery_Analysis.git
+   cd Lottery_Analysis
    ```
+
 2. **安装依赖**
 
    ```bash
    pip install -r requirements.txt
    ```
+
 3. **运行分析**
 
    ```bash
-   python lottery_analyzer.py
+   python main.py
    ```
 
 ### GitHub Actions自动化
@@ -125,7 +138,7 @@ lucky_ball/
 
 ### 修改抓取参数
 
-在 `lottery_analyzer.py` 中可以调整以下参数：
+在 `scripts/lottery_analyzer.py` 中可以调整以下参数：
 
 ```python
 # 修改请求头
