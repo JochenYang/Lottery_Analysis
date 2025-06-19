@@ -1,21 +1,21 @@
 name: 更新彩票数据和分析报告
 
 on:
-  schedule:
-    # 每天晚上21:45 (UTC+8) 运行，对应 13:45 UTC
-    - cron: '45 13 * * *'
-  workflow_dispatch: # 允许手动触发
   push:
     branches: [ main ]  # 推送到main分支时触发
   pull_request:
     branches: [ main ]  # PR合并到main分支时触发
     types: [ closed ]   # 只在PR关闭时触发
+  schedule:
+    # 每天晚上21:45 (UTC+8) 运行，对应 13:45 UTC
+    - cron: '45 13 * * *'
+  workflow_dispatch: # 允许手动触发
+
 
 jobs:
   update-lottery-data:
     runs-on: ubuntu-latest
-    # 确保PR只在合并时运行，而不是简单关闭时运行
-    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+
     
     steps:
     - name: 检出代码
@@ -73,18 +73,18 @@ jobs:
       id: git-check
       run: |
         echo "检查文件变更..."
-        if git diff --exit-code data/ reports/ pics/ > /dev/null 2>&1; then
+        if git diff --exit-code data/ reports/ pics/ README.md > /dev/null 2>&1; then
           echo "没有检测到文件变更"
           echo "changed=false" >> $GITHUB_OUTPUT
         else
           echo "检测到文件变更"
           echo "changed=true" >> $GITHUB_OUTPUT
           echo "变更的文件:"
-          git diff --name-only data/ reports/ pics/ || true
+          git diff --name-only data/ reports/ pics/ README.md || true
         fi
         
     - name: 提交更新
-      if: steps.git-check.outputs.changed == 'true'
+      if: (steps.git-check.outputs.changed == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')) || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
       run: |
         echo "准备提交文件变更..."
         git config --local user.email "snjyor@gmail.com"
@@ -94,6 +94,7 @@ jobs:
         [ -d "data" ] && git add data/ || echo "data目录不存在"
         [ -d "reports" ] && git add reports/ || echo "reports目录不存在"  
         [ -d "pics" ] && git add pics/ || echo "pics目录不存在"
+        [ -f "README.md" ] && git add README.md || echo "README.md文件不存在"
         
         # 检查是否有文件被添加
         if git diff --cached --quiet; then
