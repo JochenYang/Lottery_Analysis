@@ -140,6 +140,7 @@ jobs:
         ### 📁 更新文件
         **双色球数据：**
         - \`data/lottery_data.json\` - 双色球开奖数据
+        - \`README.md\` - 项目首页推荐号码
 
         ### ⚠️ 免责声明
         本数据仅供学习和统计分析使用，彩票开奖完全随机，请理性购彩。
@@ -171,6 +172,7 @@ jobs:
           # 显示更新的文件
           echo "📁 更新的文件:"
           [ -f "data/lottery_data.json" ] && echo "  ✓ 双色球开奖数据"
+          [ -f "README.md" ] && echo "  ✓ README.md"
         else
           echo "ℹ️ 彩票数据无变化，跳过提交 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
         fi
