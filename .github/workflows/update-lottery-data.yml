@@ -1,11 +1,6 @@
 name: 更新彩票数据和分析报告
 
 on:
-  push:
-    branches: [ main ]  # 推送到main分支时触发
-  pull_request:
-    branches: [ main ]  # PR合并到main分支时触发
-    types: [ closed ]   # 只在PR关闭时触发
   schedule:
     # 每天晚上21:45 (UTC+8) 运行，对应 13:45 UTC
     - cron: '45 13 * * *'
@@ -84,7 +79,7 @@ jobs:
         fi
         
     - name: 提交更新
-      if: (steps.git-check.outputs.changed == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')) || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+      if: steps.git-check.outputs.changed == 'true'
       run: |
         echo "准备提交文件变更..."
         git config --local user.email "snjyor@gmail.com"
@@ -109,7 +104,7 @@ jobs:
         echo "文件提交成功"
         
     - name: 创建重大更新的发布版本
-      if: steps.git-check.outputs.changed == 'true'
+      if: steps.git-check.outputs.changed == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
