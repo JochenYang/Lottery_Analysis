@@ -3,171 +3,273 @@ name: 更新彩票数据和分析报告
 on:
   schedule:
     # 每天晚上21:45 (UTC+8) 运行，对应 13:45 UTC
-    - cron: '45 13 * * *'
+    - cron: "45 13 * * *"
   workflow_dispatch: # 允许手动触发
-
 
 jobs:
   update-lottery-data:
     runs-on: ubuntu-latest
 
-    
     steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-      
-    - name: 设置Python环境
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        
-    - name: 缓存pip依赖
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-        
-    - name: 安装依赖
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests pandas numpy matplotlib seaborn beautifulsoup4 hjson DrissionPage
-        
-        # 安装Chrome浏览器（DrissionPage需要）
-        # echo "安装Chrome浏览器..."
-        # wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        # echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        # sudo apt-get update
-        # sudo apt-get install -y google-chrome-stable
-        
-        # # 验证Chrome安装
-        # google-chrome --version
-        
-        # # 设置显示环境变量（无头模式）
-        # export DISPLAY=:99
-        # echo "Chrome浏览器安装完成"
-        
-    - name: 运行彩票数据分析
-      run: |
-        echo "开始运行彩票数据分析..."
-        python main.py
-        exit_code=$?
-        echo "分析完成，退出码: $exit_code"
-        
-        # 不管成功失败都继续到下一步，让git变更检查来决定是否需要提交
-        # 这样可以确保：
-        # 1. 只有真正有数据更新时才会提交（通过git diff检查）
-        # 2. 即使部分分析失败，成功的部分仍能提交
-        # 3. 避免因为旧文件存在而误判为成功
-        echo "继续到文件变更检查步骤..."
-        
-    - name: 检查文件变更
-      id: git-check
-      run: |
-        echo "检查文件变更..."
-        if git diff --exit-code data/ reports/ pics/ README.md > /dev/null 2>&1; then
-          echo "没有检测到文件变更"
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "检测到文件变更"
-          echo "changed=true" >> $GITHUB_OUTPUT
-          echo "变更的文件:"
-          git diff --name-only data/ reports/ pics/ README.md || true
-        fi
-        
-    - name: 提交更新
-      if: steps.git-check.outputs.changed == 'true'
-      run: |
-        echo "准备提交文件变更..."
-        git config --local user.email "snjyor@gmail.com"
-        git config --local user.name "snjyor"
-        
-        # 检查并添加存在的文件
-        [ -d "data" ] && git add data/ || echo "data目录不存在"
-        [ -d "reports" ] && git add reports/ || echo "reports目录不存在"  
-        [ -d "pics" ] && git add pics/ || echo "pics目录不存在"
-        [ -f "README.md" ] && git add README.md || echo "README.md文件不存在"
-        
-        # 检查是否有文件被添加
-        if git diff --cached --quiet; then
-          echo "没有文件需要提交"
-          exit 0
-        fi
-        
-        # 提交变更
-        commit_message="🎯 更新彩票数据和分析报告 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
-        git commit -m "$commit_message"
-        git push
-        echo "文件提交成功"
-        
-    - name: 创建重大更新的发布版本
-      if: steps.git-check.outputs.changed == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo "准备创建发布版本..."
-        # 获取当前日期作为tag (使用UTC+8时区)
-        TAG_NAME="$(TZ='Asia/Shanghai' date +'%Y%m%d')"
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-        # 强制删除已存在的tag，确保幂等性
-        echo "正在删除可能存在的旧标签: $TAG_NAME"
-        git push --delete origin $TAG_NAME 2>/dev/null || echo "远程标签 $TAG_NAME 不存在或删除失败，继续执行。"
-        git tag -d $TAG_NAME 2>/dev/null || echo "本地标签 $TAG_NAME 不存在或删除失败，继续执行。"
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-        # 创建新的tag和release
-        echo "正在创建新标签: $TAG_NAME"
-        git tag $TAG_NAME
-        git push origin $TAG_NAME
+      - name: 缓存pip依赖
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-        # 创建release notes
-        cat > release_notes.md << EOF
-        ## 🎯 彩票数据更新 - $(TZ='Asia/Shanghai' date +'%Y年%m月%d日') (UTC+8)
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas numpy matplotlib seaborn beautifulsoup4 hjson DrissionPage
 
-        ### 📊 本次更新内容
-        - 抓取最新双色球开奖数据
-        - 更新统计分析图表
-        - 刷新号码频率分析
-        - 更新分析报告文档
+          # 安装Chrome浏览器（DrissionPage需要）
+          # echo "安装Chrome浏览器..."
+          # wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          # echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          # sudo apt-get update
+          # sudo apt-get install -y google-chrome-stable
 
-        ### 📁 更新文件
-        **双色球数据：**
-        - \`data/lottery_data.json\` - 双色球开奖数据
-        - \`README.md\` - 项目首页推荐号码
+          # # 验证Chrome安装
+          # google-chrome --version
 
-        ### ⚠️ 免责声明
-        本数据仅供学习和统计分析使用，彩票开奖完全随机，请理性购彩。
-        EOF
+          # # 设置显示环境变量（无头模式）
+          # export DISPLAY=:99
+          # echo "Chrome浏览器安装完成"
 
-        # 准备要上传的文件列表（只上传存在的文件）
-        upload_files=""
-        [ -f "data/lottery_data.json" ] && upload_files="$upload_files data/lottery_data.json"
+      - name: 运行彩票数据分析
+        run: |
+          echo "开始运行彩票数据分析..."
 
-        # 使用GitHub CLI创建release（只上传存在的文件）
-        if [ -n "$upload_files" ]; then
-          gh release create $TAG_NAME \
-            --title "彩票数据更新 $TAG_NAME" \
-            --notes-file release_notes.md \
-            $upload_files
-          echo "发布版本创建成功，包含文件: $upload_files"
-        else
-          gh release create $TAG_NAME \
-            --title "彩票数据更新 $TAG_NAME" \
-            --notes-file release_notes.md
-          echo "发布版本创建成功，但没有数据文件可上传"
-        fi
-        
-    - name: 输出结果
-      run: |
-        if [ "${{ steps.git-check.outputs.changed }}" == "true" ]; then
-          echo "✅ 彩票数据已更新并提交 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
-          
-          # 显示更新的文件
-          echo "📁 更新的文件:"
-          [ -f "data/lottery_data.json" ] && echo "  ✓ 双色球开奖数据"
-          [ -f "README.md" ] && echo "  ✓ README.md"
-        else
-          echo "ℹ️ 彩票数据无变化，跳过提交 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
-        fi
+          # 添加执行前的环境检查
+          echo "📁 当前工作目录: $(pwd)"
+          echo "📋 执行前文件状态检查:"
+          [ -f "README.md" ] && echo "  ✓ README.md 存在" || echo "  ❌ README.md 不存在"
+          [ -f "main.py" ] && echo "  ✓ main.py 存在" || echo "  ❌ main.py 不存在"
+          [ -d "scripts" ] && echo "  ✓ scripts目录 存在" || echo "  ❌ scripts目录 不存在"
+
+          # 检查README.md中的推荐号码标记
+          if [ -f "README.md" ]; then
+            echo "🔍 检查README.md中的标记:"
+            grep -n "RECOMMENDATIONS_START" README.md || echo "  ⚠️ 未找到RECOMMENDATIONS_START标记"
+            grep -n "RECOMMENDATIONS_END" README.md || echo "  ⚠️ 未找到RECOMMENDATIONS_END标记"
+          fi
+
+          echo "🚀 开始执行Python分析脚本..."
+          python main.py
+          exit_code=$?
+          echo "分析完成，退出码: $exit_code"
+
+          # 添加执行后的文件状态检查
+          echo "📋 执行后文件状态检查:"
+          [ -f "README.md" ] && echo "  ✓ README.md 存在" || echo "  ❌ README.md 不存在"
+          [ -f "data/lottery_data.json" ] && echo "  ✓ lottery_data.json 存在" || echo "  ❌ lottery_data.json 不存在"
+          [ -f "reports/analysis_report.md" ] && echo "  ✓ analysis_report.md 存在" || echo "  ❌ analysis_report.md 不存在"
+
+          # 检查README.md的最后修改时间
+          if [ -f "README.md" ]; then
+            echo "📅 README.md 最后修改时间: $(stat -c %y README.md 2>/dev/null || stat -f %Sm README.md 2>/dev/null || echo '无法获取')"
+            echo "🔍 README.md 推荐号码部分预览:"
+            grep -A 5 -B 1 "双色球推荐" README.md || echo "  ⚠️ 未找到推荐号码内容"
+          fi
+
+          # 不管成功失败都继续到下一步，让git变更检查来决定是否需要提交
+          # 这样可以确保：
+          # 1. 只有真正有数据更新时才会提交（通过git diff检查）
+          # 2. 即使部分分析失败，成功的部分仍能提交
+          # 3. 避免因为旧文件存在而误判为成功
+          echo "继续到文件变更检查步骤..."
+
+      - name: 检查文件变更
+        id: git-check
+        run: |
+          echo "检查文件变更..."
+
+          # 添加详细的文件状态检查
+          echo "📋 详细文件状态检查:"
+          echo "  📁 data目录:"
+          [ -d "data" ] && ls -la data/ || echo "    ❌ data目录不存在"
+          echo "  📁 reports目录:"
+          [ -d "reports" ] && ls -la reports/ || echo "    ❌ reports目录不存在"
+          echo "  📁 pics目录:"
+          [ -d "pics" ] && ls -la pics/ || echo "    ❌ pics目录不存在"
+          echo "  📄 README.md:"
+          [ -f "README.md" ] && ls -la README.md || echo "    ❌ README.md不存在"
+
+          # 检查每个文件/目录的git状态
+          echo "🔍 Git状态检查:"
+          echo "  data目录变更:"
+          git diff --name-only data/ || echo "    无变更"
+          echo "  reports目录变更:"
+          git diff --name-only reports/ || echo "    无变更"
+          echo "  pics目录变更:"
+          git diff --name-only pics/ || echo "    无变更"
+          echo "  README.md变更:"
+          git diff --name-only README.md || echo "    无变更"
+
+          # 特别检查README.md的内容变更
+          if [ -f "README.md" ]; then
+            echo "📝 README.md内容变更详情:"
+            if git diff --quiet README.md; then
+              echo "    ✅ README.md无变更"
+            else
+              echo "    🔄 README.md有变更，变更内容:"
+              git diff README.md | head -20 || true
+            fi
+          fi
+
+          # 保持原有的整体检查逻辑
+          if git diff --exit-code data/ reports/ pics/ README.md > /dev/null 2>&1; then
+            echo "没有检测到文件变更"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "检测到文件变更"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "变更的文件:"
+            git diff --name-only data/ reports/ pics/ README.md || true
+          fi
+
+      - name: 提交更新
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          echo "准备提交文件变更..."
+          git config --local user.email "snjyor@gmail.com"
+          git config --local user.name "snjyor"
+
+          # 添加提交前的详细验证
+          echo "📋 提交前文件验证:"
+
+          # 检查并添加存在的文件
+          if [ -d "data" ]; then
+            git add data/
+            echo "  ✅ data目录已添加到暂存区"
+          else
+            echo "  ❌ data目录不存在"
+          fi
+
+          if [ -d "reports" ]; then
+            git add reports/
+            echo "  ✅ reports目录已添加到暂存区"
+          else
+            echo "  ❌ reports目录不存在"
+          fi
+
+          if [ -d "pics" ]; then
+            git add pics/
+            echo "  ✅ pics目录已添加到暂存区"
+          else
+            echo "  ❌ pics目录不存在"
+          fi
+
+          # 特别验证README.md
+          if [ -f "README.md" ]; then
+            echo "📝 README.md特殊验证:"
+            echo "  📅 文件大小: $(wc -c < README.md) 字节"
+            echo "  📅 行数: $(wc -l < README.md) 行"
+            echo "  🔍 推荐号码标记检查:"
+            grep -c "RECOMMENDATIONS_START" README.md && echo "    ✅ 开始标记存在" || echo "    ❌ 开始标记缺失"
+            grep -c "RECOMMENDATIONS_END" README.md && echo "    ✅ 结束标记存在" || echo "    ❌ 结束标记缺失"
+            echo "  📝 最新推荐内容预览:"
+            grep -A 3 "更新时间:" README.md || echo "    ⚠️ 未找到更新时间"
+
+            git add README.md
+            echo "  ✅ README.md已添加到暂存区"
+          else
+            echo "  ❌ README.md文件不存在"
+          fi
+
+          # 显示暂存区状态
+          echo "📋 暂存区状态:"
+          git diff --cached --name-only || echo "  暂存区为空"
+
+          # 检查是否有文件被添加
+          if git diff --cached --quiet; then
+            echo "没有文件需要提交"
+            exit 0
+          fi
+
+          # 提交变更
+          commit_message="🎯 更新彩票数据和分析报告 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
+          git commit -m "$commit_message"
+          git push
+          echo "文件提交成功"
+
+      - name: 创建重大更新的发布版本
+        if: steps.git-check.outputs.changed == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "准备创建发布版本..."
+          # 获取当前日期作为tag (使用UTC+8时区)
+          TAG_NAME="$(TZ='Asia/Shanghai' date +'%Y%m%d')"
+
+          # 强制删除已存在的tag，确保幂等性
+          echo "正在删除可能存在的旧标签: $TAG_NAME"
+          git push --delete origin $TAG_NAME 2>/dev/null || echo "远程标签 $TAG_NAME 不存在或删除失败，继续执行。"
+          git tag -d $TAG_NAME 2>/dev/null || echo "本地标签 $TAG_NAME 不存在或删除失败，继续执行。"
+
+          # 创建新的tag和release
+          echo "正在创建新标签: $TAG_NAME"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
+          # 创建release notes
+          cat > release_notes.md << EOF
+          ## 🎯 彩票数据更新 - $(TZ='Asia/Shanghai' date +'%Y年%m月%d日') (UTC+8)
+
+          ### 📊 本次更新内容
+          - 抓取最新双色球开奖数据
+          - 更新统计分析图表
+          - 刷新号码频率分析
+          - 更新分析报告文档
+
+          ### 📁 更新文件
+          **双色球数据：**
+          - \`data/lottery_data.json\` - 双色球开奖数据
+          - \`README.md\` - 项目首页推荐号码
+
+          ### ⚠️ 免责声明
+          本数据仅供学习和统计分析使用，彩票开奖完全随机，请理性购彩。
+          EOF
+
+          # 准备要上传的文件列表（只上传存在的文件）
+          upload_files=""
+          [ -f "data/lottery_data.json" ] && upload_files="$upload_files data/lottery_data.json"
+
+          # 使用GitHub CLI创建release（只上传存在的文件）
+          if [ -n "$upload_files" ]; then
+            gh release create $TAG_NAME \
+              --title "彩票数据更新 $TAG_NAME" \
+              --notes-file release_notes.md \
+              $upload_files
+            echo "发布版本创建成功，包含文件: $upload_files"
+          else
+            gh release create $TAG_NAME \
+              --title "彩票数据更新 $TAG_NAME" \
+              --notes-file release_notes.md
+            echo "发布版本创建成功，但没有数据文件可上传"
+          fi
+
+      - name: 输出结果
+        run: |
+          if [ "${{ steps.git-check.outputs.changed }}" == "true" ]; then
+            echo "✅ 彩票数据已更新并提交 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
+            
+            # 显示更新的文件
+            echo "📁 更新的文件:"
+            [ -f "data/lottery_data.json" ] && echo "  ✓ 双色球开奖数据"
+            [ -f "README.md" ] && echo "  ✓ README.md"
+          else
+            echo "ℹ️ 彩票数据无变化，跳过提交 - $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S') (UTC+8)"
+          fi
