@@ -70,7 +70,7 @@ def update_readme_recommendations(recommendations, timestamp, latest_draw=None, 
 
 | 期号 | 开奖日期 | 红球号码 | 蓝球 |
 |------|----------|----------|------|
-| {latest_draw['issue']} | {latest_draw['date']} | `{red_balls}` | `{latest_draw['blue_ball']:02d}` |
+| {latest_draw['period']} | {latest_draw['date']} | `{red_balls}` | `{latest_draw['blue_ball']:02d}` |
 
 **📈 数据统计**: 已收录 {total_draws} 期开奖数据 | 最后更新: {timestamp}
 
@@ -254,7 +254,7 @@ def main():
     print(f"🔴 双色球分析: {'✅ 成功' if lottery_success else '❌ 失败'}")
     if lottery_success:
         print(f"📊 数据期数: {len(analyzer.lottery_data)} 期")
-        print(f"📅 最新期号: {analyzer.lottery_data[0]['issue'] if analyzer.lottery_data else '无'}")
+        print(f"📅 最新期号: {analyzer.lottery_data[0]['period'] if analyzer.lottery_data else '无'}")
     print(f"⏱️  总耗时: {duration:.1f} 秒")
     print(f"🕐 完成时间: {current_time} (UTC+8)")
 
