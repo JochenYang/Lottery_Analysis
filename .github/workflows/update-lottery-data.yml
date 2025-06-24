@@ -144,8 +144,8 @@ jobs:
         if: steps.git-check.outputs.changed == 'true'
         run: |
           echo "准备提交文件变更..."
-          git config --local user.email "snjyor@gmail.com"
-          git config --local user.name "snjyor"
+          git config --local user.email "dayantv666@gmail.com"
+          git config --local user.name "Jochen"
 
           # 添加提交前的详细验证
           echo "📋 提交前文件验证:"
