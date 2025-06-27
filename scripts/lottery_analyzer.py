@@ -598,7 +598,27 @@ class DoubleColorBallAnalyzer:
             }
         ]
         
-        random.seed(42)  # 固定种子，确保结果可重现
+        # 计算动态种子，基于最新期号和当前日期
+        try:
+            if self.lottery_data and len(self.lottery_data) > 0:
+                # 获取最新期号（安全提取数字部分）
+                latest_period = int(re.sub(r'\D', '', str(self.lottery_data[0]['period'])))
+                # 获取当前日期
+                current_date = datetime.now().strftime('%Y%m%d')
+                # 生成动态种子（限制期号长度防溢出）
+                seed_str = str(latest_period)[-6:] + current_date
+                dynamic_seed = int(seed_str) % (2**31 - 1)
+                print(f"🎲 动态种子: {dynamic_seed} (期号:{latest_period}, 日期:{current_date})")
+            else:
+                # 备用方案：使用时间戳
+                dynamic_seed = int(datetime.now().timestamp()) % (2**31 - 1)
+                print(f"🎲 备用种子: {dynamic_seed} (基于时间戳)")
+        except Exception as e:
+            # 最终备用方案
+            dynamic_seed = int(time.time()) % (2**31 - 1)
+            print(f"⚠️ 种子计算异常，使用备用: {dynamic_seed}")
+
+        random.seed(dynamic_seed)
         
         for i, strategy in enumerate(strategies[:num_sets]):
             selected_reds = []
