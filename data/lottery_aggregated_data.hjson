@@ -8,7 +8,11 @@
     lottery_type: 双色球
     lottery_type_en: double_color_ball
     game_rules: 红球1-33选6个，蓝球1-16选1个
+<<<<<<< HEAD
     generated_time: 2025年06月28日 06:29:26
+=======
+    generated_time: 2025年06月27日 21:55:27
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
     timezone: UTC+8
     total_periods: 1879
     latest_period: "2025072"
@@ -580,19 +584,34 @@
         description: 高中低频均衡的平衡组合
         red_balls:
         [
+<<<<<<< HEAD
           1
           10
           12
           19
           26
           29
+=======
+          6
+          7
+          22
+          23
+          27
+          33
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         ]
         blue_ball: 16
         characteristics:
         {
+<<<<<<< HEAD
           odd_even_ratio: 3奇3偶
           sum_value: 97
           span_value: 28
+=======
+          odd_even_ratio: 4奇2偶
+          sum_value: 118
+          span_value: 27
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         }
       }
       {
@@ -600,19 +619,30 @@
         description: 中频主导的稳健组合
         red_balls:
         [
+<<<<<<< HEAD
           1
           8
           11
           13
           16
+=======
+          7
+          14
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
           20
         ]
         blue_ball: 15
         characteristics:
         {
+<<<<<<< HEAD
           odd_even_ratio: 3奇3偶
           sum_value: 69
           span_value: 19
+=======
+          odd_even_ratio: 2奇4偶
+          sum_value: 126
+          span_value: 25
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         }
       }
       {
@@ -620,9 +650,14 @@
         description: 热号与冷号结合的对冲组合
         red_balls:
         [
+<<<<<<< HEAD
           6
           16
           22
+=======
+          14
+          21
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
           26
           32
           33
@@ -630,9 +665,15 @@
         blue_ball: 7
         characteristics:
         {
+<<<<<<< HEAD
           odd_even_ratio: 1奇5偶
           sum_value: 135
           span_value: 27
+=======
+          odd_even_ratio: 2奇4偶
+          sum_value: 150
+          span_value: 18
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         }
       }
       {
@@ -680,19 +721,34 @@
         description: 各频段随机均衡组合
         red_balls:
         [
+<<<<<<< HEAD
           4
           5
           6
           12
           23
           27
+=======
+          2
+          6
+          7
+          12
+          16
+          29
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         ]
         blue_ball: 15
         characteristics:
         {
+<<<<<<< HEAD
           odd_even_ratio: 3奇3偶
           sum_value: 77
           span_value: 23
+=======
+          odd_even_ratio: 2奇4偶
+          sum_value: 72
+          span_value: 27
+>>>>>>> 078ee90d111e3c22277828e68b2375084dc7a98a
         }
       }
       {
