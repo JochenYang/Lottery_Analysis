@@ -11,12 +11,12 @@
       30
     ],
     "blue_ball": 8,
-    "first_prize_count": 0,
-    "first_prize_amount": 0,
-    "second_prize_count": 0,
-    "second_prize_amount": 0,
-    "sales_amount": 0,
-    "pool_amount": 0
+    "first_prize_count": 4,
+    "first_prize_amount": 7403293,
+    "second_prize_count": 189,
+    "second_prize_amount": 63579,
+    "sales_amount": 380376886,
+    "pool_amount": 2396570293
   },
   {
     "period": "2025075",
