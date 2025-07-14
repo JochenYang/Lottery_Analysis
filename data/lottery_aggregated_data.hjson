@@ -8,7 +8,7 @@
     lottery_type: 双色球
     lottery_type_en: double_color_ball
     game_rules: 红球1-33选6个，蓝球1-16选1个
-    generated_time: 2025年07月13日 21:54:39
+    generated_time: 2025年07月14日 21:59:03
     timezone: UTC+8
     total_periods: 1886
     latest_period: "2025079"
@@ -558,19 +558,19 @@
         description: 基于最高频号码的稳定组合
         red_balls:
         [
-          1
-          9
-          14
-          22
-          26
-          32
+          2
+          8
+          17
+          19
+          20
+          25
         ]
         blue_ball: 1
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 104
-          span_value: 31
+          odd_even_ratio: 3奇3偶
+          sum_value: 91
+          span_value: 23
         }
       }
       {
@@ -578,19 +578,19 @@
         description: 高中低频均衡的平衡组合
         red_balls:
         [
-          13
+          5
+          9
+          11
+          14
           15
-          20
-          22
           27
-          29
         ]
         blue_ball: 15
         characteristics:
         {
-          odd_even_ratio: 4奇2偶
-          sum_value: 126
-          span_value: 16
+          odd_even_ratio: 5奇1偶
+          sum_value: 81
+          span_value: 22
         }
       }
       {
@@ -598,19 +598,19 @@
         description: 中频主导的稳健组合
         red_balls:
         [
-          9
-          10
-          18
-          23
-          30
-          32
+          1
+          7
+          12
+          21
+          22
+          25
         ]
         blue_ball: 16
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 122
-          span_value: 23
+          odd_even_ratio: 4奇2偶
+          sum_value: 88
+          span_value: 24
         }
       }
       {
@@ -619,17 +619,17 @@
         red_balls:
         [
           2
-          6
           9
-          23
-          28
+          11
+          19
+          24
           33
         ]
         blue_ball: 7
         characteristics:
         {
-          odd_even_ratio: 3奇3偶
-          sum_value: 101
+          odd_even_ratio: 4奇2偶
+          sum_value: 98
           span_value: 31
         }
       }
@@ -638,19 +638,19 @@
         description: 超高频号码的激进组合
         red_balls:
         [
-          2
-          6
+          9
+          14
           17
-          20
-          22
-          26
+          19
+          23
+          27
         ]
         blue_ball: 1
         characteristics:
         {
-          odd_even_ratio: 1奇5偶
-          sum_value: 93
-          span_value: 24
+          odd_even_ratio: 5奇1偶
+          sum_value: 109
+          span_value: 18
         }
       }
       {
@@ -658,19 +658,19 @@
         description: 低频号码的反向思维组合
         red_balls:
         [
-          2
-          3
-          15
-          28
-          30
-          32
+          5
+          7
+          17
+          21
+          23
+          31
         ]
         blue_ball: 12
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 110
-          span_value: 30
+          odd_even_ratio: 6奇0偶
+          sum_value: 104
+          span_value: 26
         }
       }
       {
@@ -678,19 +678,19 @@
         description: 各频段随机均衡组合
         red_balls:
         [
-          14
-          15
-          22
-          28
-          32
-          33
+          2
+          16
+          17
+          18
+          26
+          31
         ]
         blue_ball: 16
         characteristics:
         {
           odd_even_ratio: 2奇4偶
-          sum_value: 144
-          span_value: 19
+          sum_value: 110
+          span_value: 29
         }
       }
       {
@@ -698,19 +698,19 @@
         description: 考虑奇偶平衡的优化组合
         red_balls:
         [
-          4
-          9
-          12
+          1
+          8
           17
-          26
+          18
           27
+          28
         ]
         blue_ball: 15
         characteristics:
         {
           odd_even_ratio: 3奇3偶
-          sum_value: 95
-          span_value: 23
+          sum_value: 99
+          span_value: 27
         }
       }
     ]
