@@ -8,7 +8,7 @@
     lottery_type: 双色球
     lottery_type_en: double_color_ball
     game_rules: 红球1-33选6个，蓝球1-16选1个
-    generated_time: 2025年08月14日 22:46:29
+    generated_time: 2025年08月15日 22:44:51
     timezone: UTC+8
     total_periods: 1900
     latest_period: "2025093"
@@ -559,17 +559,17 @@
         red_balls:
         [
           1
-          2
-          7
-          9
+          6
+          8
+          10
           18
           27
         ]
         blue_ball: 1
         characteristics:
         {
-          odd_even_ratio: 4奇2偶
-          sum_value: 64
+          odd_even_ratio: 2奇4偶
+          sum_value: 70
           span_value: 26
         }
       }
@@ -578,19 +578,19 @@
         description: 高中低频均衡的平衡组合
         red_balls:
         [
+          5
+          10
           13
-          14
-          17
-          18
-          19
-          33
+          15
+          26
+          27
         ]
         blue_ball: 15
         characteristics:
         {
           odd_even_ratio: 4奇2偶
-          sum_value: 114
-          span_value: 20
+          sum_value: 96
+          span_value: 22
         }
       }
       {
@@ -598,19 +598,19 @@
         description: 中频主导的稳健组合
         red_balls:
         [
-          1
-          4
-          15
-          18
+          9
+          13
           19
+          20
+          24
           32
         ]
         blue_ball: 16
         characteristics:
         {
           odd_even_ratio: 3奇3偶
-          sum_value: 89
-          span_value: 31
+          sum_value: 117
+          span_value: 23
         }
       }
       {
@@ -618,19 +618,19 @@
         description: 热号与冷号结合的对冲组合
         red_balls:
         [
+          1
           2
-          4
-          8
-          14
+          3
+          12
+          16
           19
-          30
         ]
         blue_ball: 7
         characteristics:
         {
-          odd_even_ratio: 1奇5偶
-          sum_value: 77
-          span_value: 28
+          odd_even_ratio: 3奇3偶
+          sum_value: 53
+          span_value: 18
         }
       }
       {
@@ -639,17 +639,17 @@
         red_balls:
         [
           2
-          14
-          17
+          6
           19
           22
+          26
           32
         ]
         blue_ball: 1
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 106
+          odd_even_ratio: 1奇5偶
+          sum_value: 107
           span_value: 30
         }
       }
@@ -658,19 +658,19 @@
         description: 低频号码的反向思维组合
         red_balls:
         [
-          4
-          18
-          22
+          1
+          5
           23
           29
-          33
+          30
+          32
         ]
         blue_ball: 12
         characteristics:
         {
-          odd_even_ratio: 3奇3偶
-          sum_value: 129
-          span_value: 29
+          odd_even_ratio: 4奇2偶
+          sum_value: 120
+          span_value: 31
         }
       }
       {
@@ -678,19 +678,19 @@
         description: 各频段随机均衡组合
         red_balls:
         [
-          11
-          14
-          15
-          22
-          24
+          1
+          2
+          7
+          21
+          25
           29
         ]
         blue_ball: 16
         characteristics:
         {
-          odd_even_ratio: 3奇3偶
-          sum_value: 115
-          span_value: 18
+          odd_even_ratio: 5奇1偶
+          sum_value: 85
+          span_value: 28
         }
       }
       {
@@ -698,19 +698,19 @@
         description: 考虑奇偶平衡的优化组合
         red_balls:
         [
-          4
           9
+          12
           17
-          20
+          18
+          24
           27
-          32
         ]
         blue_ball: 15
         characteristics:
         {
           odd_even_ratio: 3奇3偶
-          sum_value: 109
-          span_value: 28
+          sum_value: 107
+          span_value: 18
         }
       }
     ]
