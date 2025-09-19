@@ -8,7 +8,7 @@
     lottery_type: 双色球
     lottery_type_en: double_color_ball
     game_rules: 红球1-33选6个，蓝球1-16选1个
-    generated_time: 2025年09月18日 22:42:09
+    generated_time: 2025年09月19日 22:42:15
     timezone: UTC+8
     total_periods: 1915
     latest_period: "2025108"
@@ -558,19 +558,19 @@
         description: 基于最高频号码的稳定组合
         red_balls:
         [
-          1
-          2
           6
-          15
+          16
           18
+          19
+          22
           26
         ]
         blue_ball: 16
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 68
-          span_value: 25
+          odd_even_ratio: 1奇5偶
+          sum_value: 107
+          span_value: 20
         }
       }
       {
@@ -579,18 +579,18 @@
         red_balls:
         [
           6
-          7
-          13
+          15
+          17
+          18
           21
-          22
-          26
+          27
         ]
         blue_ball: 1
         characteristics:
         {
-          odd_even_ratio: 3奇3偶
-          sum_value: 95
-          span_value: 20
+          odd_even_ratio: 4奇2偶
+          sum_value: 104
+          span_value: 21
         }
       }
       {
@@ -598,19 +598,19 @@
         description: 中频主导的稳健组合
         red_balls:
         [
-          2
-          6
-          12
-          25
-          32
-          33
+          11
+          14
+          15
+          18
+          26
+          31
         ]
         blue_ball: 15
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 110
-          span_value: 31
+          odd_even_ratio: 3奇3偶
+          sum_value: 115
+          span_value: 20
         }
       }
       {
@@ -619,18 +619,18 @@
         red_balls:
         [
           1
-          2
           3
-          22
+          10
+          24
+          27
           32
-          33
         ]
         blue_ball: 7
         characteristics:
         {
           odd_even_ratio: 3奇3偶
-          sum_value: 93
-          span_value: 32
+          sum_value: 97
+          span_value: 31
         }
       }
       {
@@ -638,19 +638,19 @@
         description: 超高频号码的激进组合
         red_balls:
         [
-          6
-          9
+          2
           14
-          16
           17
-          26
+          19
+          20
+          27
         ]
         blue_ball: 16
         characteristics:
         {
-          odd_even_ratio: 2奇4偶
-          sum_value: 88
-          span_value: 20
+          odd_even_ratio: 3奇3偶
+          sum_value: 99
+          span_value: 25
         }
       }
       {
@@ -658,19 +658,19 @@
         description: 低频号码的反向思维组合
         red_balls:
         [
-          1
-          8
-          16
-          23
-          28
-          33
+          3
+          6
+          7
+          13
+          21
+          29
         ]
         blue_ball: 12
         characteristics:
         {
-          odd_even_ratio: 3奇3偶
-          sum_value: 109
-          span_value: 32
+          odd_even_ratio: 5奇1偶
+          sum_value: 79
+          span_value: 26
         }
       }
       {
@@ -678,19 +678,19 @@
         description: 各频段随机均衡组合
         red_balls:
         [
-          3
-          7
-          9
-          15
-          19
-          21
+          11
+          14
+          20
+          24
+          27
+          31
         ]
         blue_ball: 15
         characteristics:
         {
-          odd_even_ratio: 6奇0偶
-          sum_value: 74
-          span_value: 18
+          odd_even_ratio: 3奇3偶
+          sum_value: 127
+          span_value: 20
         }
       }
       {
@@ -698,19 +698,19 @@
         description: 考虑奇偶平衡的优化组合
         red_balls:
         [
-          9
-          18
+          16
+          17
           19
+          24
           27
-          28
           32
         ]
         blue_ball: 1
         characteristics:
         {
           odd_even_ratio: 3奇3偶
-          sum_value: 133
-          span_value: 23
+          sum_value: 135
+          span_value: 16
         }
       }
     ]
